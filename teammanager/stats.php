@@ -1,6 +1,12 @@
 <?php
+    session_start();
     include_once("connection.php");
-    echo $_POST["fixtureid"]
+    if(ISSET($_POST['fixtureid'])){
+        $_SESSION['fixtureid'] = $_POST['fixtureid'];
+    }
+    echo $_SESSION['playerid'];
+
+
 ?>
 
 <!DOCTYPE html>
@@ -23,8 +29,9 @@
             $stmt = $conn->prepare("SELECT * FROM TblPlayers 
                                     INNER JOIN TblTeamFixture ON TblPlayers.PlayerID = TblTeamFixture.PlayerID 
                                     WHERE TblTeamFixture.FixtureID = :fixtureid;");
-            $stmt->bindParam(':fixtureid', $_POST["fixtureid"]);
+            $stmt->bindParam(':fixtureid', $_SESSION["fixtureid"]);
             $stmt -> execute();
+            // Selects the players on the teamsheet
 
 
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
@@ -32,9 +39,17 @@
                     <div class = 'fixture_list'>
                     $row[Firstname] 
                     $row[Lastname]
-                    <br></div>    
+                    <br>
+                
+                    <form action='recordstats.php' method = 'post' class = 'form'> 
+                        <input type='hidden' name='playerid' value=$row[PlayerID]>
+                        <button type='submit' class = 'adduser'>Record</button>
+                    </form>
+
+                    </div>    
                     ");
                 }
+                // Outputs the players with option to edit stats
                 
             
         ?>
@@ -43,9 +58,24 @@
     
         <!-- Framework -->
 
-        <a class = "pagebutton" style = "width: 100%" href="home_fixture_coach.php">Back</a>
+        <a  href="home_fixture_coach.php"><button class = "pagebutton" style = "width: 50%; border-width: 0px;">Back</button></a>
 
-    </div>    
+        <button onclick = "oppscore()" class = "pagebutton" style = "width: 50%; border-width: 0px;" >Finish</button>
+        <!-- The 'Finish' button carries out the funtion oppscore in javascript -->
+        <form id="myForm" action="finishgame.php" method="POST"> 
+            <input type="hidden" name="inputValue" id="inputValue"> 
+        </form> 
+        
+        
+        <script>
+        function oppscore(){
+        let userInput = prompt("Please enter opponent score: "); //A prompt appears to enter the score for the opponent
+       
+        document.getElementById('inputValue').value = userInput; 
+        document.getElementById('myForm').submit(); //Takes the user input, puts it in a form and submits to finishgame.php for further action
+        } 
+    
+        </script>
     <!-- Bottom of the page containing contact information -->
     <div class = "bottom">
         Made by Ethan He

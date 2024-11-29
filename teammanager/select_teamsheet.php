@@ -112,7 +112,7 @@
                     <input type='hidden' name='fixtureid' value=$_SESSION[fixtureid]>
                     <input type='hidden' name='playerid' value=$row[PlayerID]>
                     <button type='submit' class = 'adduser'>Remove</button>
-                    </form><br>
+                </form><br>
                 </div>
                 ");
             }
